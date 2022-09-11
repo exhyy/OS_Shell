@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 char SHELL_NAME[] = "YuyaoShell";
 char command_buffer[MAX_COMMAND_LENGTH];
@@ -47,7 +48,10 @@ int parse_command()
         left++;
     }
     if (*left == '\n' || *left == '\0')
+    {
+        commands_length = 0;
         return INPUT_OK;
+    }
     right = left + 1;
     while(1)
     {
@@ -79,11 +83,26 @@ int parse_command()
                 break;
             right = left;
         }
-
         right++;
-        // printf("check 2 : %c\n", *right);
     }
     commands_length = cnt;
+
+    // 将每段命令开头的~转换为HOME目录
+    char *home = getenv("HOME");
+    int home_length = strlen(home);
+    char temp[MAX_COMMAND_LENGTH];
+    for (int i = 0; i < commands_length; i++)
+    {
+        if (commands[i][0] == '~' && (commands[i][1] == '/' || commands[i][1] == '\0'))
+        {
+            strcpy(temp, home);
+            for (int j = 1; commands[i][j] != '\0'; j++)
+            {
+                temp[home_length + j - 1] = commands[i][j];
+            }
+            strcpy(commands[i], temp);
+        }
+    }
     return INPUT_OK;
 }
 
@@ -106,6 +125,10 @@ void run_command(int command_flag)
             else if (strcmp(commands[0], "exit") == 0)
             {
                 exit_shell(commands, commands_length);
+            }
+            else if (strcmp(commands[0], "ls") == 0)
+            {
+                ls(commands, commands_length);
             }
             else
             {
