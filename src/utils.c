@@ -5,6 +5,18 @@
 #include <malloc.h>
 #include <stdlib.h>
 
+void init_shell()
+{
+    fprintf(stdout, "\n");
+    fprintf(stdout, "__  __                           _____ __         ____\n");
+    fprintf(stdout, "\\ \\/ /_  ____  ______ _____     / ___// /_  ___  / / /\n");
+    fprintf(stdout, " \\  / / / / / / / __ `/ __ \\    \\__ \\/ __ \\/ _ \\/ / / \n");
+    fprintf(stdout, " / / /_/ / /_/ / /_/ / /_/ /   ___/ / / / /  __/ / /  \n");
+    fprintf(stdout, "/_/\\__,_/\\__, /\\__,_/\\____/   /____/_/ /_/\\___/_/_/   \n");
+    fprintf(stdout, "        /____/                                        \n");
+    fprintf(stdout, "\n");
+}
+
 int str_is_int(const char *str)
 {
     const char *p = str;
