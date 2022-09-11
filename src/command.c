@@ -1,4 +1,5 @@
 #include "command.h"
+#include "buildin.h"
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
@@ -7,7 +8,7 @@
 char SHELL_NAME[] = "YuyaoShell";
 char command_buffer[MAX_COMMAND_LENGTH];
 char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH];
-int commands_cnt = 0;
+int commands_length = 0;
 
 // 显示等待输入信息，并保存用户输入的命令
 int input_command()
@@ -17,7 +18,6 @@ int input_command()
     getcwd(cwd, 256);
     printf("%s:%s $ ", SHELL_NAME, cwd);
     fgets(command_buffer, MAX_COMMAND_LENGTH, stdin);
-    printf("command_buffer: %s", command_buffer);
     char ch;
     int input_overflow = 0;
     if (command_buffer[MAX_COMMAND_LENGTH - 2] != '\n' && command_buffer[MAX_COMMAND_LENGTH - 2] != '\0')
@@ -83,7 +83,7 @@ int parse_command()
         right++;
         // printf("check 2 : %c\n", *right);
     }
-    commands_cnt = cnt;
+    commands_length = cnt;
     return INPUT_OK;
 }
 
@@ -92,7 +92,26 @@ void run_command(int command_flag)
 {
     if (command_flag == INPUT_OK)
     {
-        printf("执行命令: %s\n", commands[0]);
+        if (commands_length == 0)
+        {
+            // 空命令，直接结束
+            return;
+        }
+        else
+        {
+            if (strcmp(commands[0], "cd") == 0)
+            {
+                cd(commands, commands_length);
+            }
+            else if (strcmp(commands[0], "exit") == 0)
+            {
+                exit_shell(commands, commands_length);
+            }
+            else
+            {
+                fprintf(stderr, "错误：命令不存在：%s\n", commands[0]);
+            }
+        }
     }
     else if (command_flag == INPUT_OVERFLOW)
     {
