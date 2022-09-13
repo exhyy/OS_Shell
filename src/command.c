@@ -1,5 +1,6 @@
 #include "command.h"
 #include "buildin.h"
+#include "external.h"
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
@@ -17,7 +18,7 @@ int input_command()
     memset(command_buffer, 0, sizeof(command_buffer));
     char cwd[256];
     getcwd(cwd, 256);
-    printf("%s:%s $ ", SHELL_NAME, cwd);
+    fprintf(stdout, "%s:%s $ ", SHELL_NAME, cwd);
     fgets(command_buffer, MAX_COMMAND_LENGTH, stdin);
     char ch;
     int input_overflow = 0;
@@ -32,7 +33,6 @@ int input_command()
     {
         return INPUT_OVERFLOW;
     }
-    // printf("check 1\n");
 
     return parse_command();
 }
@@ -132,16 +132,17 @@ void run_command(int command_flag)
             }
             else
             {
-                fprintf(stderr, "错误：命令不存在：%s\n", commands[0]);
+                // fprintf(stderr, "错误：命令不存在：%s\n", commands[0]);
+                run_external(commands, commands_length);
             }
         }
     }
     else if (command_flag == INPUT_OVERFLOW)
     {
-        printf("命令过长！\n");
+        fprintf(stderr, "命令过长！\n");
     }
     else if (command_flag == ARGS_OVERFLOW)
     {
-        printf("命令参数过多！\n");
+        fprintf(stderr, "命令参数过多！\n");
     }
 }
