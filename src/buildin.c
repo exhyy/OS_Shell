@@ -6,6 +6,7 @@
 #include <malloc.h>
 #include <dirent.h>
 #include <string.h>
+#include <sys/syscall.h>
 
 void cd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
 {
@@ -16,7 +17,7 @@ void cd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
     }
     else if (commands_length == 2)
     {
-        if(chdir(commands[1]))
+        if(syscall(SYS_chdir, commands[1]) != 0)
         {
             fprintf(stderr, "错误：路径不存在或权限不足：%s\n", commands[1]);
         }
@@ -126,5 +127,19 @@ void ls(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
                 }
             }
         }
+    }
+}
+
+void pwd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
+{
+    if (commands_length == 1)
+    {
+        char cwd[256];
+        syscall(SYS_getcwd, cwd, 256);
+        fprintf(stdout, "%s\n", cwd);
+    }
+    else
+    {
+        fprintf(stderr, "错误：参数过多！\n");
     }
 }

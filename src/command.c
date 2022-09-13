@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/syscall.h>
 
 char SHELL_NAME[] = "YuyaoShell";
 char command_buffer[MAX_COMMAND_LENGTH];
@@ -121,6 +122,7 @@ void run_command(int command_flag)
             if (strcmp(commands[0], "cd") == 0)
             {
                 cd(commands, commands_length);
+                // syscall(SYS_chdir, commands[1]);
             }
             else if (strcmp(commands[0], "exit") == 0)
             {
@@ -130,9 +132,12 @@ void run_command(int command_flag)
             {
                 ls(commands, commands_length);
             }
+            else if (strcmp(commands[0], "pwd") == 0)
+            {
+                pwd(commands, commands_length);
+            }
             else
             {
-                // fprintf(stderr, "错误：命令不存在：%s\n", commands[0]);
                 run_external(commands, commands_length);
             }
         }
