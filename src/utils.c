@@ -4,6 +4,11 @@
 #include <dirent.h>
 #include <malloc.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <fcntl.h>
+
+#define O_RW 0666
 
 void init_shell()
 {
@@ -92,4 +97,75 @@ int print_file_names(const char *path, int show_hidden, int print_path)
     }
     free(file_names);
     return 1;
+}
+
+int is_dir(const char *path)
+{
+    if (path == NULL)
+    {
+        return 0;
+    }
+    if (opendir(path) == NULL)
+    {
+        return 0;
+    }
+    return 1;
+}
+
+void split_path(const char *file_path, char *dir_path, char *file_name)
+{
+    if(file_path == NULL)
+    {
+        return;
+    }
+    int path_length = strlen(file_path);
+    int split_index = -1;
+    for (int i = path_length - 1; i >= 0; i--)
+    {
+        if(file_path[i] == '/')
+        {
+            split_index = i;
+            break;
+        }
+    }
+    if (split_index != -1)
+    {
+        if (dir_path != NULL)
+        {
+            for (int i = 0; i < split_index; i++)
+            {
+                dir_path[i] = file_path[i];
+            }
+        }
+        if(file_name != NULL)
+        {
+            for (int i = split_index + 1; i < path_length; i++)
+            {
+                file_name[i] = file_path[i];
+            }
+        }
+    }
+    else
+    {
+        if (dir_path != NULL)
+            strcpy(dir_path, "");
+        if (file_name != NULL)
+            strcpy(file_name, file_path);
+    }
+}
+
+void copy_file(const char *dst, const char *src)
+{
+    int fd_src, fd_dst, count;
+    char buffer[2048];
+    int mode = syscall(SYS_access, src, X_OK) == 0 ? 0777 : 0666; // 判断是否可执行
+    fd_src = syscall(SYS_open, src, O_RDONLY);
+    fd_dst = syscall(SYS_creat, dst, mode);
+    
+    while ((count = syscall(SYS_read, fd_src, buffer, sizeof(buffer))) != 0)
+    {
+        syscall(SYS_write, fd_dst, buffer, count);
+    }
+    syscall(SYS_close, fd_src);
+    syscall(SYS_close, fd_dst);
 }

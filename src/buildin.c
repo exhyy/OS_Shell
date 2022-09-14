@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <sys/syscall.h>
+#include <fcntl.h>
 
 void cd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
 {
@@ -141,5 +142,90 @@ void pwd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands
     else
     {
         fprintf(stderr, "错误：参数过多！\n");
+    }
+}
+
+void cat(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
+{
+    if (commands_length == 1)
+    {
+        fprintf(stderr, "错误：至少提供一个文件\n");
+    }
+    else
+    {
+        char buffer[256];
+        int fd, count;
+        for (int i = 1; i < commands_length; i++)
+        {
+            fd = syscall(SYS_open, commands[i], O_RDONLY);
+            if (fd == -1)
+            {
+                fprintf(stderr, "错误：文件不存在或权限不足：%s\n", commands[i]);
+                continue;
+            }
+            while((count = syscall(SYS_read, fd, buffer, sizeof(buffer))) != 0)
+            {
+                for (int j = 0; j < count; j++)
+                {
+                    fprintf(stdout, "%c", buffer[j]);
+                }
+            }
+            syscall(SYS_close, fd);
+        }
+    }
+}
+
+void cp(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
+{
+    if (commands_length < 3)
+    {
+        fprintf(stderr, "错误：缺少必要参数\n");
+    }
+    else if (commands_length > 3)
+    {
+        fprintf(stderr, "错误：参数过多\n");
+    }
+    else
+    {
+        if (syscall(SYS_access, commands[1], F_OK) == -1)
+        {
+            fprintf(stderr, "错误：文件不存在或权限不足：%s\n", commands[1]);
+        }
+        else
+        {
+            if (is_dir(commands[2]))
+            {
+                // 目标参数是目录，把文件复制到该目录下，文件名不变
+                char file_name[MAX_COMMAND_LENGTH];
+                char file_dst[2 * MAX_COMMAND_LENGTH];
+
+                split_path(commands[1], NULL, file_name);
+                strcpy(file_dst, commands[2]);
+                int len = strlen(file_dst);
+                if (file_dst[len - 1] != '/')
+                {
+                    // 补上反斜杠
+                    file_dst[len] = '/';
+                    file_dst[len + 1] = '\0';
+                }
+                strcat(file_dst, file_name);
+                copy_file(file_dst, commands[1]);
+            }
+            else
+            {
+                // 目标参数是文件路径
+                char dir_path[MAX_COMMAND_LENGTH];
+
+                split_path(commands[2], dir_path, NULL);
+                if (is_dir(dir_path))
+                {
+                    copy_file(commands[2], commands[1]);
+                }
+                else
+                {
+                    fprintf(stderr, "错误：目标路径不存在或权限不足：%s\n", dir_path);
+                }
+            }
+        }
     }
 }

@@ -136,6 +136,14 @@ void run_command(int command_flag)
             {
                 pwd(commands, commands_length);
             }
+            else if (strcmp(commands[0], "cat") == 0)
+            {
+                cat(commands, commands_length);
+            }
+            else if (strcmp(commands[0], "cp") == 0)
+            {
+                cp(commands, commands_length);
+            }
             else
             {
                 run_external(commands, commands_length);
