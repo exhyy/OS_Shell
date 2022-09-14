@@ -207,6 +207,7 @@ void get_external_path(const char *command, char *command_path)
     }
 
     // 在PATH路径下查找文件
+    int flag = 0;
     for (int i = 0; i < num_paths; i++)
     {
         DIR *dir = opendir(paths[i]);
@@ -225,12 +226,21 @@ void get_external_path(const char *command, char *command_path)
                 if (syscall(SYS_access, temp, X_OK) == 0)
                 {
                     strcpy(command_path, temp);
-                    return;
+                    flag = 1;
+                    break;
                 }
             }
         }
+        if (flag)
+            break;
     }
-
+    
     // PATH中没有找到该可执行文件
-    strcpy(command_path, "#");
+    if (!flag)
+        strcpy(command_path, "#");
+
+    // 释放内存
+    for (int i = 0; i < num_paths; i++)
+        free(paths[i]);
+    free(paths);
 }
