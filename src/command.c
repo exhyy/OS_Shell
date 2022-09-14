@@ -119,10 +119,13 @@ void run_command(int command_flag)
         }
         else
         {
-            if (strcmp(commands[0], "cd") == 0)
+            if (strcmp(commands[0], "type") == 0)
+            {
+                type(commands, commands_length);
+            }
+            else if (strcmp(commands[0], "cd") == 0)
             {
                 cd(commands, commands_length);
-                // syscall(SYS_chdir, commands[1]);
             }
             else if (strcmp(commands[0], "exit") == 0)
             {

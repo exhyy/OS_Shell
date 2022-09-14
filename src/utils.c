@@ -169,3 +169,68 @@ void copy_file(const char *dst, const char *src)
     syscall(SYS_close, fd_src);
     syscall(SYS_close, fd_dst);
 }
+
+void get_external_path(const char *command, char *command_path)
+{
+    if (command_path == NULL)
+        return;
+    char *path = getenv("PATH");
+    int left = 0, right = 0;
+    int num_paths = 0, max_num_paths = 16;
+    char **paths = (char **)malloc(max_num_paths * sizeof(char *));
+    int i = 0;
+
+    // 分解PATH的所有路径
+    while (1)
+    {
+        if (path[i] == ':' || path[i] == '\0')
+        {
+            if (num_paths == max_num_paths)
+            {
+                char **old = paths;
+                max_num_paths *= 2;
+                paths = (char **)malloc(num_paths * sizeof(char *));
+                memcpy(paths, old, num_paths * sizeof(char *));
+                free(old);
+            }
+            right = i;
+            paths[num_paths] = (char *)malloc((right - left + 1) * sizeof(char));
+            memcpy(paths[num_paths], path + left, right - left);
+            paths[num_paths][right - left] = '\0';
+            num_paths++;
+            left = right + 1;
+        }
+
+        if (path[i] == '\0')
+            break;
+        i++;
+    }
+
+    // 在PATH路径下查找文件
+    for (int i = 0; i < num_paths; i++)
+    {
+        DIR *dir = opendir(paths[i]);
+        if (!dir)
+            continue;
+        struct dirent *entry = NULL;
+        while ((entry = readdir(dir)) != 0)
+        {
+            if (strcmp(entry->d_name, command) == 0)
+            {
+                char temp[256];
+                strcpy(temp, paths[i]);
+                strcat(temp, "/");
+                strcat(temp, command);
+                // 要求该文件可执行
+                if (syscall(SYS_access, temp, X_OK) == 0)
+                {
+                    strcpy(command_path, temp);
+                    return;
+                }
+            }
+        }
+    }
+
+    // PATH中没有找到该可执行文件
+    strcpy(command_path, "#");
+}

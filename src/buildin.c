@@ -9,7 +9,59 @@
 #include <sys/syscall.h>
 #include <fcntl.h>
 
-void cd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
+char BUILTIN_COMMANDS[][MAX_COMMAND_LENGTH] = {
+    "type",
+    "cd",
+    "exit",
+    "ls",
+    "pwd",
+    "cat",
+    "cp"
+};
+
+void type(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
+{
+    if (commands_length == 1)
+    {
+        fprintf(stderr, "错误：需要1个参数\n");
+    }
+    else if (commands_length == 2)
+    {
+        int flag = 0;
+
+        // 是否为内部命令
+        for (int i = 0; i < NUM_BUILTIN; i++)
+        {
+            if (strcmp(commands[1], BUILTIN_COMMANDS[i]) == 0)
+            {
+                flag = 1;
+                fprintf(stdout, "%s是shell的内部命令\n", commands[1]);
+                break;
+            }
+        }
+
+        // 是否为外部命令
+        if (!flag)
+        {
+            char external_path[256];
+            get_external_path(commands[1], external_path);
+            if (external_path[0] != '#')
+            {
+                fprintf(stdout, "%s是外部命令，路径：%s\n", commands[1], external_path);
+            }
+            else
+            {
+                fprintf(stdout, "未找到命令：%s\n", commands[1]);
+            }
+        }
+    }
+    else
+    {
+        fprintf(stderr, "错误：参数过多！\n");
+    }
+}
+
+    void cd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
 {
     if (commands_length == 1)
     {
