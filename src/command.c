@@ -1,5 +1,5 @@
 #include "command.h"
-#include "buildin.h"
+#include "builtin.h"
 #include "external.h"
 #include <stdio.h>
 #include <malloc.h>
