@@ -207,6 +207,7 @@ void cat(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands
     {
         char buffer[256];
         int fd, count;
+        char last = '\0';
         for (int i = 1; i < commands_length; i++)
         {
             fd = syscall(SYS_open, commands[i], O_RDONLY);
@@ -220,9 +221,14 @@ void cat(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands
                 for (int j = 0; j < count; j++)
                 {
                     fprintf(stdout, "%c", buffer[j]);
+                    last = buffer[j];
                 }
             }
             syscall(SYS_close, fd);
+        }
+        if (last != '\n' && last != '\0')
+        {
+            fprintf(stdout, "\n");
         }
     }
 }
