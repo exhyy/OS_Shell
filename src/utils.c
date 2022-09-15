@@ -216,7 +216,7 @@ void get_external_path(const char *command, char *command_path)
             {
                 char **old = paths;
                 max_num_paths *= 2;
-                paths = (char **)malloc(num_paths * sizeof(char *));
+                paths = (char **)malloc(max_num_paths * sizeof(char *));
                 memcpy(paths, old, num_paths * sizeof(char *));
                 free(old);
             }
