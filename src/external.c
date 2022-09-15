@@ -14,7 +14,7 @@ void run_external(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int
     else if (pid == 0)
     {
         // 子进程
-        const char ** argv = (const char **)malloc((commands_length + 1) * sizeof(const char *));
+        const char **argv = (const char **)malloc((commands_length + 1) * sizeof(const char *));
         for (int i = 0; i < commands_length; i++)
         {
             argv[i] = commands[i];

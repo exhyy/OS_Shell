@@ -26,9 +26,9 @@ void init_shell()
 int str_is_int(const char *str)
 {
     const char *p = str;
-    if(*p == '-')
+    if (*p == '-')
         p++;
-    while(*p != '\0')
+    while (*p != '\0')
     {
         if (*p < '0' || *p > '9')
             return 0;
@@ -54,7 +54,7 @@ char **list_dir(const char *path)
     char **file_names = (char **)malloc((max_num_files + 1) * sizeof(char *));
     file_names[0] = NULL;
     DIR *dir = opendir(path);
-    if(!dir)
+    if (!dir)
     {
         return NULL;
     }
@@ -89,7 +89,7 @@ int print_file_names(const char *path, int show_hidden, int print_path)
     {
         fprintf(stdout, "%s:\n", path);
     }
-    
+
     struct winsize size;
     ioctl(STDIN_FILENO, TIOCGWINSZ, &size);
     int cols = size.ws_col;
@@ -141,7 +141,7 @@ int is_dir(const char *path)
 
 void split_path(const char *file_path, char *dir_path, char *file_name)
 {
-    if(file_path == NULL)
+    if (file_path == NULL)
     {
         return;
     }
@@ -149,7 +149,7 @@ void split_path(const char *file_path, char *dir_path, char *file_name)
     int split_index = -1;
     for (int i = path_length - 1; i >= 0; i--)
     {
-        if(file_path[i] == '/')
+        if (file_path[i] == '/')
         {
             split_index = i;
             break;
@@ -164,7 +164,7 @@ void split_path(const char *file_path, char *dir_path, char *file_name)
                 dir_path[i] = file_path[i];
             }
         }
-        if(file_name != NULL)
+        if (file_name != NULL)
         {
             for (int i = split_index + 1; i < path_length; i++)
             {
@@ -188,7 +188,7 @@ void copy_file(const char *dst, const char *src)
     int mode = syscall(SYS_access, src, X_OK) == 0 ? 0777 : 0666; // 判断是否可执行
     fd_src = syscall(SYS_open, src, O_RDONLY);
     fd_dst = syscall(SYS_creat, dst, mode);
-    
+
     while ((count = syscall(SYS_read, fd_src, buffer, sizeof(buffer))) != 0)
     {
         syscall(SYS_write, fd_dst, buffer, count);
@@ -261,7 +261,7 @@ void get_external_path(const char *command, char *command_path)
         if (flag)
             break;
     }
-    
+
     // PATH中没有找到该可执行文件
     if (!flag)
         strcpy(command_path, "#");

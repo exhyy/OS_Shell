@@ -54,7 +54,7 @@ int parse_command()
         return INPUT_OK;
     }
     right = left + 1;
-    while(1)
+    while (1)
     {
         if (*right == '\n' || *right == '\0')
         {

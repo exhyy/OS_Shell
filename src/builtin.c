@@ -17,8 +17,7 @@ char BUILTIN_COMMANDS[][MAX_COMMAND_LENGTH] = {
     "pwd",
     "cat",
     "cp",
-    "env"
-};
+    "env"};
 
 void type(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
 {
@@ -62,7 +61,7 @@ void type(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int command
     }
 }
 
-    void cd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
+void cd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
 {
     if (commands_length == 1)
     {
@@ -71,7 +70,7 @@ void type(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int command
     }
     else if (commands_length == 2)
     {
-        if(syscall(SYS_chdir, commands[1]) != 0)
+        if (syscall(SYS_chdir, commands[1]) != 0)
         {
             fprintf(stderr, "错误：路径不存在或权限不足：%s\n", commands[1]);
         }
@@ -139,7 +138,7 @@ void ls(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
             }
             else
             {
-                if(!print_file_names(commands[1], show_hidden, 0))
+                if (!print_file_names(commands[1], show_hidden, 0))
                 {
                     fprintf(stderr, "错误：路径不存在或权限不足：%s\n", commands[1]);
                 }
@@ -152,7 +151,7 @@ void ls(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
             {
                 if (strcmp(commands[i], "-a") != 0)
                 {
-                    if(!print_file_names(commands[i], show_hidden, !show_hidden))
+                    if (!print_file_names(commands[i], show_hidden, !show_hidden))
                     {
                         fprintf(stderr, "错误：路径不存在或权限不足：%s\n", commands[i]);
                     }
@@ -170,7 +169,7 @@ void ls(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
             {
                 if (strcmp(commands[i], "-a") != 0)
                 {
-                    if(!print_file_names(commands[i], show_hidden, 1))
+                    if (!print_file_names(commands[i], show_hidden, 1))
                     {
                         fprintf(stderr, "错误：路径不存在或权限不足：%s\n", commands[i]);
                     }
@@ -216,7 +215,7 @@ void cat(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands
                 fprintf(stderr, "错误：文件不存在或权限不足：%s\n", commands[i]);
                 continue;
             }
-            while((count = syscall(SYS_read, fd, buffer, sizeof(buffer))) != 0)
+            while ((count = syscall(SYS_read, fd, buffer, sizeof(buffer))) != 0)
             {
                 for (int j = 0; j < count; j++)
                 {
