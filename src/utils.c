@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/syscall.h>
+#include <sys/ioctl.h>
 #include <fcntl.h>
 
 #define O_RW 0666
@@ -88,13 +89,39 @@ int print_file_names(const char *path, int show_hidden, int print_path)
     {
         fprintf(stdout, "%s:\n", path);
     }
+    
+    struct winsize size;
+    ioctl(STDIN_FILENO, TIOCGWINSZ, &size);
+    int cols = size.ws_col;
+
+    int current = 0;
+    int first = 1;
     for (char **p = file_names; *p != NULL; p++)
     {
         if ((*p)[0] != '.' || show_hidden)
         {
-            fprintf(stdout, "%s\n", *p);
+            current += strlen(*p);
+            if (first)
+            {
+                first = 0;
+            }
+            else
+            {
+                current += 2;
+                if (current <= cols)
+                {
+                    fprintf(stdout, "  ");
+                }
+            }
+            if (current > cols)
+            {
+                fprintf(stdout, "\n");
+                current = strlen(*p);
+            }
+            fprintf(stdout, "%s", *p);
         }
     }
+    fprintf(stdout, "\n");
     free(file_names);
     return 1;
 }
