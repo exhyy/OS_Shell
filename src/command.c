@@ -147,6 +147,10 @@ void run_command(int command_flag)
             {
                 cp(commands, commands_length);
             }
+            else if (strcmp(commands[0], "env") == 0)
+            {
+                env(commands, commands_length);
+            }
             else
             {
                 run_external(commands, commands_length);

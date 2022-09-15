@@ -281,3 +281,71 @@ void cp(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
         }
     }
 }
+
+void env(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
+{
+    extern char **environ;
+    if (commands_length == 1)
+    {
+        for (int i = 0; environ[i]; i++)
+            fprintf(stdout, "%s\n", environ[i]);
+    }
+    else if (commands_length == 2)
+    {
+        if (strcmp(commands[1], "set") == 0 || strcmp(commands[1], "unset") == 0 || strcmp(commands[1], "get") == 0)
+        {
+            fprintf(stderr, "错误：操作%s缺少必要参数\n", commands[1]);
+        }
+        else
+        {
+            fprintf(stderr, "错误：命令env不支持操作%s\n", commands[1]);
+        }
+    }
+    else if (commands_length == 3)
+    {
+        if (strcmp(commands[1], "set") == 0)
+        {
+            int flag = 0;
+            for (int i = 0; commands[2][i] != '\0'; i++)
+            {
+                if (commands[2][i] == '=')
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag)
+            {
+                char command[MAX_COMMAND_ARGC];
+                strcpy(command, commands[2]);
+                if (putenv(command))
+                {
+                    fprintf(stderr, "错误：环境变量设置失败：%s\n", commands[2]);
+                }
+            }
+            else
+            {
+                fprintf(stderr, "错误：参数缺少等号：%s\n", commands[2]);
+            }
+        }
+        else if (strcmp(commands[1], "unset") == 0)
+        {
+            if (unsetenv(commands[2]))
+            {
+                fprintf(stderr, "错误：清除环境变量失败：%s\n", commands[2]);
+            }
+        }
+        else if (strcmp(commands[1], "get") == 0)
+        {
+            fprintf(stdout, "%s\n", getenv(commands[2]));
+        }
+        else
+        {
+            fprintf(stderr, "错误：命令env不支持操作%s\n", commands[1]);
+        }
+    }
+    else
+    {
+        fprintf(stderr, "错误：参数过多！\n");
+    }
+}

@@ -12,5 +12,6 @@ void ls(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
 void pwd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length);
 void cat(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length);
 void cp(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length);
+void env(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length);
 
 #endif
