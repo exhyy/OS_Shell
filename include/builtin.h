@@ -3,7 +3,7 @@
 
 #include "command.h"
 
-#define NUM_BUILTIN 7
+#define NUM_BUILTIN 8
 
 void type(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length);
 void cd(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length);

@@ -16,7 +16,8 @@ char BUILTIN_COMMANDS[][MAX_COMMAND_LENGTH] = {
     "ls",
     "pwd",
     "cat",
-    "cp"
+    "cp",
+    "env"
 };
 
 void type(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
