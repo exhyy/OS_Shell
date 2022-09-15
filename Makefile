@@ -7,9 +7,12 @@ C_FLAGS := -Iinclude -g -Wall
 all: ${OBJ}
 	gcc $^ -o ${TARGET} ${C_FLAGS}
 
-build/%.o: src/%.c
-	gcc -o $@ -c $^ ${C_FLAGS}
+build/%.o: src/%.c dir
+	gcc -o $@ -c $< ${C_FLAGS}
+
+dir:
+	@mkdir -p build
 
 clean:
-	rm -rf build/*
+	rm -rf build
 	rm -rf ${TARGET}
