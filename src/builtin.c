@@ -273,9 +273,10 @@ void cp(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
             {
                 // 目标参数是文件路径
                 char dir_path[MAX_COMMAND_LENGTH];
+                char file_name[MAX_COMMAND_LENGTH];
 
-                split_path(commands[2], dir_path, NULL);
-                if (is_dir(dir_path))
+                split_path(commands[2], dir_path, file_name);
+                if (is_dir(dir_path) || strcmp(file_name, commands[2]) == 0)
                 {
                     copy_file(commands[2], commands[1]);
                 }
