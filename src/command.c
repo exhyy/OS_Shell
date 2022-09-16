@@ -96,11 +96,13 @@ int parse_command()
     {
         if (commands[i][0] == '~' && (commands[i][1] == '/' || commands[i][1] == '\0'))
         {
+            int j = 1;
             strcpy(temp, home);
-            for (int j = 1; commands[i][j] != '\0'; j++)
+            for (j = 1; commands[i][j] != '\0'; j++)
             {
                 temp[home_length + j - 1] = commands[i][j];
             }
+            temp[home_length + j - 1] = '\0';
             strcpy(commands[i], temp);
         }
     }
