@@ -24,14 +24,14 @@ void run_external(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int
 
         // 如果exec失败，则继续执行以下代码
         free(argv);
-        exit(255);
+        exit(MAGIC_EXIT_CODE);
     }
     else if (pid > 0)
     {
         // 主进程
         int status;
         wait(&status);
-        if (WEXITSTATUS(status) == 255)
+        if (WEXITSTATUS(status) == MAGIC_EXIT_CODE)
         {
             fprintf(stderr, "错误：命令不存在：%s\n", commands[0]);
         }
