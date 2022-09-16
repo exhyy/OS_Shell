@@ -185,9 +185,12 @@ void copy_file(const char *dst, const char *src)
 {
     int fd_src, fd_dst, count;
     char buffer[2048];
-    int mode = syscall(SYS_access, src, X_OK) == 0 ? 0777 : 0666; // 判断是否可执行
-    fd_src = syscall(SYS_open, src, O_RDONLY);
-    fd_dst = syscall(SYS_creat, dst, mode);
+    // int mode = syscall(SYS_access, src, X_OK) == 0 ? 0777 : 0666; // 判断是否可执行
+    // fd_src = syscall(SYS_open, src, O_RDONLY);
+    // fd_dst = syscall(SYS_creat, dst, mode);
+    int mode = access(src, X_OK) == 0 ? 0777 : 0666;
+    fd_src = open(src, O_RDONLY);
+    fd_dst = creat(dst, mode);
 
     while ((count = syscall(SYS_read, fd_src, buffer, sizeof(buffer))) != 0)
     {
@@ -250,7 +253,8 @@ void get_external_path(const char *command, char *command_path)
                 strcat(temp, "/");
                 strcat(temp, command);
                 // 要求该文件可执行
-                if (syscall(SYS_access, temp, X_OK) == 0)
+                // if (syscall(SYS_access, temp, X_OK) == 0)
+                if (access(temp, X_OK) == 0)
                 {
                     strcpy(command_path, temp);
                     flag = 1;

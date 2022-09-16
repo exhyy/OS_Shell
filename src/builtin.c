@@ -210,7 +210,8 @@ void cat(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands
         char last = '\0';
         for (int i = 1; i < commands_length; i++)
         {
-            fd = syscall(SYS_open, commands[i], O_RDONLY);
+            // fd = syscall(SYS_open, commands[i], O_RDONLY);
+            fd = open(commands[i], O_RDONLY);
             if (fd == -1)
             {
                 fprintf(stderr, "错误：文件不存在或权限不足：%s\n", commands[i]);
@@ -245,7 +246,8 @@ void cp(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
     }
     else
     {
-        if (syscall(SYS_access, commands[1], F_OK) == -1)
+        // if (syscall(SYS_access, commands[1], F_OK) == -1)
+        if (access(commands[1], F_OK) == -1)
         {
             fprintf(stderr, "错误：文件不存在或权限不足：%s\n", commands[1]);
         }
