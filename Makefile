@@ -8,11 +8,9 @@ C_FLAGS := -Iinclude -g -Wall
 all: ${OBJ}
 	${CC} $^ -o ${TARGET} ${C_FLAGS}
 
-build/%.o: src/%.c dir
-	${CC} -o $@ -c $< ${C_FLAGS}
-
-dir:
+build/%.o: src/%.c
 	@mkdir -p build
+	${CC} -o $@ -c $< ${C_FLAGS}
 
 clean:
 	rm -rf build
