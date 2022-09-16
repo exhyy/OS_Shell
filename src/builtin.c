@@ -292,6 +292,7 @@ void cp(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_
 void env(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands_length)
 {
     extern char **environ;
+
     if (commands_length == 1)
     {
         for (int i = 0; environ[i]; i++)
@@ -323,9 +324,9 @@ void env(const char commands[MAX_COMMAND_ARGC][MAX_COMMAND_LENGTH], int commands
             }
             if (flag)
             {
-                char command[MAX_COMMAND_ARGC];
-                strcpy(command, commands[2]);
-                if (putenv(command))
+                char *current_env = (char *)malloc((strlen(commands[2]) + 1) * sizeof(char));
+                strcpy(current_env, commands[2]);
+                if (putenv(current_env))
                 {
                     fprintf(stderr, "错误：环境变量设置失败：%s\n", commands[2]);
                 }
